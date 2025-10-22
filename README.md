@@ -24,7 +24,8 @@ pip install -r requirements.txt
 
 ## Running the Script
 Run the script using Python:
-```python main.py
+```
+python main.py
 ```
 
 When you run the app for the first time, a browser window will open and ask you to log in to your Spotify account and authorize the app.
