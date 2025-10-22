@@ -36,12 +36,17 @@ def main():
     
     playlist_name = f"{artist_name} Discography"
 
+    print(f"Creating playlist '{playlist_name}'...")
     playlist = sp.user_playlist_create(user=sp.me()["id"], name=playlist_name, public=False)
 
     for album in artist_albums:
+        print(f"Adding album '{album['name']}' to playlist...")
         album_tracks = sp.album_tracks(album["id"])["items"]
         tracks_ids = get_ids(album_tracks)
         sp.playlist_add_items(playlist["id"], tracks_ids)
+        
+    print()
+    print(f"Playlist '{playlist_name}' created successfully!")
         
 if __name__ == "__main__":
     main()
