@@ -16,6 +16,14 @@ SPOTIPY_REDIRECT_URI=<your_redirect_uri>
 ```
 Replace `<your_client_id>`, `<your_client_secret>`, and `<your_redirect_uri>` with the values from your Spotify app.
 
+You can also set the environment variables directly in your system or use:
+
+```
+export SPOTIPY_CLIENT_ID='your-spotify-client-id'
+export SPOTIPY_CLIENT_SECRET='your-spotify-client-secret'
+export SPOTIPY_REDIRECT_URI='your-app-redirect-url'
+```
+
 ## Installing Dependencies
 Make sure you have the required dependencies installed. You can do this by running:
 ```
