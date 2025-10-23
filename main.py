@@ -57,29 +57,43 @@ def main():
         sys.exit(1)
 
     artist_url = input("Artist URL or ID: ")
+    bsingles = input("Include singles? (Y/n): ").lower() != 'n'
+    bcompilation = input("Include compilation albums? (Y/n): ").lower() != 'n'
+    bappears_on = input("Include 'appears on' albums? (Y/n): ").lower() != 'n'
+    print()
+    
+    album_types = f"album{',single' if bsingles else ''}{',appears_on' if bappears_on else ''}{',compilation' if bcompilation else ''}"
     try:
-        artist_albums = sp.artist_albums(artist_url)["items"]
         artist = sp.artist(artist_url)
         artist_name = artist["name"]
         artist_id = artist["id"]
+        artist_albums = sp.artist_albums(artist_url, include_groups=album_types)["items"]
+        print(len(artist_albums), "albums found for artist", artist_name)
     except SpotifyException as err:
         print(err)
         print()
         print(f"Error fetching artist information. URL '{artist_url}' may be invalid.")
         sys.exit(1)
     
+        
     playlist_name = f"{artist_name} Discography"
 
     print(f"Creating playlist '{playlist_name}'...")
     playlist = sp.user_playlist_create(user=sp.me()["id"], name=playlist_name, public=False)
-
-    for album in artist_albums:
-        print(f"Adding album '{album['name']}' to playlist...")
+    
+    tracks_ids = []
+    for i, album in enumerate(artist_albums):
+        print(f"Processing album {i + 1}/{len(artist_albums)}: '{album['name']}' to playlist...")
         album_tracks = sp.album_tracks(album["id"])["items"]
         filtered_tracks = filter_artist(album_tracks, artist_id)
-        tracks_ids = get_ids(filtered_tracks)
-        sp.playlist_add_items(playlist["id"], tracks_ids)
-        
+        tracks_ids.extend(get_ids(filtered_tracks))
+    
+    print(f"Total tracks to add: {len(tracks_ids)}")
+    
+    for i in range(math.ceil(len(tracks_ids) / 100)):
+        print(f"Adding tracks {i*100 + 1} to {min((i+1)*100, len(tracks_ids))} to playlist.")
+        sp.playlist_add_items(playlist_id=playlist["id"], items=tracks_ids[i*100:(i+1)*100])
+
     print()
     print(f"Playlist '{playlist_name}' created successfully!")
         
